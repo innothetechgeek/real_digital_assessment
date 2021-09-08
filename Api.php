@@ -57,12 +57,20 @@ class API{
 			"cookies" => [],
 		];
 
-  		return curl_exec($curl);
+  		$response = curl_exec($curl);
 
 		
-		
 
-  	
+  		$result_arr["info"] = curl_getinfo($curl);
+	
+		$result_arr["body"] = $response;
+		if ($response === false) {
+		    $result_arr["error"] = curl_error($curl)." (".curl_errno($curl).")";
+		    $result_arr["error_nr"] = curl_errno($curl);
+		}
+
+  		// close
+  		curl_close($curl);
 
 		//done
   		return $result_arr;

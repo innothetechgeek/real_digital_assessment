@@ -4,7 +4,7 @@ class  Session{
 
     public static function start(){
 
-        if(empty($_SESSION)) session_start();
+        if(!isset($_SESSION)) session_start();
 
     }
 

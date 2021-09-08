@@ -10,7 +10,6 @@ class Employee{
     public $dateOfBirth;
     public $endDate;
     public $lastNotification;
-    public $message;
 
     public function __construct($attributes=[]){
 
@@ -41,10 +40,11 @@ class Employee{
     public function sendMessage($customMessage=""){
 
         
-        if (!messageSentAlready($this->id)) {
-
+        if (!$this->messageSentAlready($this->id)) {
+        
             $exclusions =  Api::get('https://interview-assessment-1.realmdigital.co.za/do-not-send-birthday-wishes');
-            
+            $exclusions = json_decode($exclusions,true);
+
             if(!in_array($this->id,$exclusions) && empty($this->endDate)){
                 $today = date("Y-m-d");
                 if($today == $this->dateOfBirth){
@@ -67,25 +67,26 @@ class Employee{
 
     }
 
-    public function setSentMessagesForDay(){
+    public function setSentMessagesForDay($day){
 
-        Session::set('sentMessages',[
-                'employee_id' => $this->id,
-                'date_sent' => $day
-            ]
-        );
+        $messages = Session::get('sentMessages');
+        $messages = empty($messages) ? [] : $messages;
+        array_push($messages, ['employee_id' => $this->id,'date_sent' => $day]);
+    
+        Session::set('sentMessages',$messages);
     }
 
     public function getSentMessagesForToday(){
 
-        return Session::get('sentMessages');
+        $sentMessages = Session::get('sentMessages');
+        return !empty($sentMessages) ? $sentMessages : [];
 
     }
 
     public function messageSentAlready($employeeId){
 
         $sentMessages = $this->getSentMessagesForToday();
-
+     
         return in_array($employeeId,array_column($sentMessages, 'employee_id'));
 
     }
