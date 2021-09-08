@@ -31,12 +31,6 @@ class Employee{
 
     }
 
-    public function setMessage($message){
-
-        $this->message = $message;
-
-    }
-
     public function sendMessage($customMessage=""){
 
         
